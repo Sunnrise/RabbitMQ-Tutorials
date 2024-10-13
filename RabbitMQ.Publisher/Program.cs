@@ -13,16 +13,17 @@ using IModel channel = connection.CreateModel();
 
 
 //Queue Creation
-channel.QueueDeclare(queue: "example-queue", exclusive: false);
+channel.QueueDeclare(queue: "example-queue", exclusive: false, durable: true);
 
 
 //Send message to queue
 //RabbitMQ accept messages as byte type. So we have to convert data to byte. 
-
+IBasicProperties properties= channel.CreateBasicProperties();
+properties.Persistent=true;
 for(int i=0;i<100;i++)
 {   
     await Task.Delay(500);
     byte[] message=Encoding.UTF8.GetBytes("Helloworld "+i);
-    channel.BasicPublish(exchange:"", routingKey:"example-queue", body: message);
+    channel.BasicPublish(exchange:"", routingKey:"example-queue", body: message, basicProperties: properties);
 }
 Console.Read();
