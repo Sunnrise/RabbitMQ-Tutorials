@@ -10,15 +10,17 @@ factory.Uri = new("amqps://vbqelytc:MbF26kun1-5hNwzQ9Q8OQ--HckTNQuZu@shark.rmq.c
 using IConnection connection = factory.CreateConnection();
 using IModel channel = connection.CreateModel();
 
-channel.ExchangeDeclare("fanout-exchange-rabbit", ExchangeType.Fanout);
+channel.ExchangeDeclare("topic-exchange-rabbit", ExchangeType.Topic);
 
-for(int i = 0; i < 100; i++)
+for (int i = 0; i < 100; i++)
 {
     await Task.Delay(200);
-    byte[] message= Encoding.UTF8.GetBytes($"Message {i}");
+    byte[] message = Encoding.UTF8.GetBytes($"Message {i}");
+    Console.WriteLine("Type a topic: ");
+    string topic = Console.ReadLine();
     channel.BasicPublish(
-        exchange:"fanout-exchange-rabbit", 
-        routingKey:string.Empty,
+        exchange: "topic-exchange-rabbit",
+        routingKey: topic,
         body: message);
 }
 Console.Read();
